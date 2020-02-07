@@ -1,53 +1,61 @@
-#include "WizFi310.h"
+#include <SPI.h>
+#include <WiFiNINA.h>
+
+//https://www.elithecomputerguy.com/2019/06/arduino-uno-with-wifi-basic-setup/
 
 char ssid[] = "pink";
 char pass[] = "sexymandoo";
-int status = WL_IDLE_STATUS; //???
+int keyIndex = 0;
 
-char server[]="arduino.cc";
-
-WiFiClient client;
-
-
-
-void printWifiStatus();
+int status = WL_IDLE_STATUS;
+WiFiServer server(80);
 
 void setup() {
-  Serial.begin(115200);
-  //Serial3.begin(115200);
-  WiFi.init(&Serial);
-
-  while ( status != WL_CONNECTED){
-    Serial.print("Attempting to connect to WPA SSID: ");
+  Serial.begin(9600);
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to Network named: ");
     Serial.println(ssid);
-
-    status=WiFi.begin(ssid, pass);
+    status = WiFi.begin(ssid, pass);
+    delay(50000);
   }
-  Serial.println("You are connected to the network.");
+  server.begin();
 
-  Serial.println();
-  Serial.println("Starting connection to server...");
-  if(client.connect(server,80)){
-    Serial.println("Connected to server");
-    client.println("GET /asciilogo.txt HTTP/1.1");
-    client.println("Host: arduino.cc");
-    client.println("Connection: close");
-    client.println();
-  }
-
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
 }
 
 void loop() {
-  while (client.available()){
-    char c = client.read();
-    Serial.write(c);
-  }
+  WiFiClient client = server.available();  
+  while(!client.available()){
+    delay(1000);
+    } 
+  if (client==true) {                             
+    Serial.println("new client");           
+    String currentLine = "";                
+    while (client.connected()) {            
+      if (client.available()) {             
+        char c = client.read();             
+        Serial.write(c);                    
+        if (c == '\n') {                    
 
-  if (!client.connected()){
-    Serial.println();
-    Serial.println("Disconnecting from sever...");
+          if (currentLine.length() == 0) {
+
+            client.println("Hello World");
+
+            break;
+          } else {
+            currentLine = "";
+          }
+        } else if (c != '\r') {
+          currentLine += c;
+        }
+      }
+    }
+
     client.stop();
-    while(true);
+    Serial.println("client disonnected");
   }
-
 }
