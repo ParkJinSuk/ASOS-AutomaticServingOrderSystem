@@ -1,90 +1,55 @@
-#include "WiFiEsp.h"
+#include <WiFi.h>                  // Use this for WiFi instead of Ethernet.h
 #include <MySQL_Connection.h>
 #include <MySQL_Cursor.h>
 
-#include "SoftwareSerial.h"
-SoftwareSerial esp(2, 3); // RX, TX
-
-
 byte mac_addr[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
-IPAddress server_addr(106,10,49,227);  // IP of the MySQL *server* here
+IPAddress server_addr(106,10,39,5);  // IP of the MySQL *server* here
 char user[] = "sexymandoo";              // MySQL user login username
 char password[] = "sexymandoo";        // MySQL user login password
 
-char ssid[] = "pink";             // 공유기 이름 SSID
-char pass[] = "sexymandoo";        // 공유기 암호 Password
-
+// WiFi card example
+char ssid[] = "pink";    // your SSID
+char pass[] = "sexymandoo";       // your SSID Password
 
 // Sample query
-char query[] = "SELECT Num FROM test.test WHERE name = 'xaewon'";
+char query[] = "SELECT Num FROM test.test WHERE name = 'sex'";
 
-int status = WL_IDLE_STATUS;        // Status
-
-WiFiEspClient client;
-
+WiFiClient client;            // Use this for WiFi instead of EthernetClient
 
 MySQL_Connection conn((Client *)&client);
 // Create an instance of the cursor passing in the connection
 MySQL_Cursor cur = MySQL_Cursor(&conn);
 
-void setup()
-{
-  Serial.begin(9600);
-  esp.begin(9600);
+void setup() {
+  Serial.begin(115200);
 
-  // 시리얼모니터가 실행될때까지 대기
-//  while (!Serial);
-
-  WiFi.init(&esp);
-
-  // 쉴드 존재유무 확인
-  if (WiFi.status() == WL_NO_SHIELD)
-  {
-    Serial.println("WiFi shield not present");
-    while (true);
+  // Begin WiFi section
+  int status = WiFi.begin(ssid, pass);
+  if ( status != WL_CONNECTED) {
+    Serial.println("Couldn't get a wifi connection");
+    while(true);
   }
-
-  // 와이파이 접속여부 확인
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    Serial.print("Attempting to connect to WPA SSID: ");
-    Serial.println(ssid);
-
-    status = WiFi.begin(ssid, pass);
+  // print out info about the connection:
+  else {
+    Serial.println("Connected to network");
+    IPAddress ip = WiFi.localIP();
+    Serial.print("My IP address is: ");
+    Serial.println(ip);
   }
+  // End WiFi section
 
-  // 와이파이 접속정보
-  Serial.println("You're connected to the network");
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
-
-  long rssi = WiFi.RSSI();
-  Serial.print("Signal strength (RSSI):");
-  Serial.print(rssi);
-  Serial.println(" dBm");
-  Serial.println();
-
-  Serial.println("Connecting to the server");
-
-
-  if (conn.connect(server_addr, 3306, user, password)) {
+  Serial.println("Connecting...");
+  if (conn.connect(server_addr, 9999, user, password)) {
     delay(1000);
-    Serial.println("Connected to the server");
   }
   else
-    Serial.println("Server connection failed.");
-  //conn.close();
-
+    Serial.println("Connection failed.");
+  conn.close();
 }
 
-void loop()
-{
-   row_values *row = NULL;
+void loop() {
+  row_values *row = NULL;
   long head_count = 0;
 
   delay(1000);
