@@ -22,6 +22,16 @@
 #define SS5_RIGHT_OUT 12
 #define NEAR          A5
 
+/* 서빙로봇 */
+#define Stop          0
+#define Left          1
+#define Straight       2
+#define Right         3
+int   route[5];   // 서빙로봇의 경로를 저장
+int   stack_right;  // 우회전길이 보일때마다 하나씩 증가
+int   cmd         // 서빙로봇이 나아갈 방향
+int   route_target[5];
+
 /* 전역 변수 */
 byte  LeftOut;
 byte  LeftIn;
@@ -34,15 +44,20 @@ int   Near;
 int   target_table;
 
 unsigned long time; // 시간 측정을 위한 변수
+int           temp;
 
 void setup() {
   Serial.begin(9600);
   Serial.println("###### Setup #####");
 
   time = millis();
+
+  route[5] = [Stop, Stop, Stop, Stop, Stop]; // 서빙로봇 경로 초기화
+  route_target[5] = [Straight, Left, Straight, Right, Straight];
 }
 
 void loop() {
+  target_table = 1;
   
   /* 0.5초마다 라인트레이서 모듈 센서 측정 */
   if((millis() - time)%500 == 0)
@@ -50,6 +65,29 @@ void loop() {
     getIRSensor();
   }
 
+  serving_table(target_table);
+
+
+
+  if (cmd == Stright)
+  {
+    //서빙로봇 앞으로 전진
+  }
+
+  if (cmd == Left)
+  {
+    //서빙로봇 좌회전
+  }
+
+  if (cmd == Right)
+  {
+    //서빙로봇 우회전
+  }
+
+  if (cmd == Stop)
+  {
+    //서빙로봇 정지
+  }
 }
 
 /* 라인트레이서 모듈 값 읽어오기 */
@@ -80,11 +118,53 @@ void showIRSensor()
 /* 서빙할 테이블로 찾아가는 알고리즘 */
 void serving_table(int table_number)
 {
-  
-  if (table_number == 1)
+  if (route[0] == Stop)
   {
-    
+    cmd = route_target[0]; // 서빙로봇의 방향 결정
+    route[0] == route_target[0];
   }
+  else if ((route[1] == Stop)  && (LeftOut == true))
+  {
+    cmd = route_target[1];
+    route[1] == route_target[1];
+  }
+  else if ((route[2] == Stop)  && (LeftOut == false))
+  {
+    cmd = route_target[2];
+    route[2] == route_target[2];
+    
+    temp = 0;
+  }
+  else if (route[3] == Stop)
+  {
+    if ((temp == 0) && RightOut == true)
+    {
+      RightTime = millis();
+      temp = 1;
+    }
+
+    if (RightOut == false)
+    {
+      temp = 0;
+    }
+    
+    if (((RightTime - millis()) > 100) && ((RightTime - millis()) < 1000))
+    {
+      stack_right += 1;
+      temp = 0;
+    }
+  }
+  else if ((route[3] == Stop)  && stack_right == table_number)
+  {
+    cmd = route_target[3];
+    route[3] == route_target[3];
+  }
+  else if ((route[4] == Stop)  && RightOut == false)
+  {
+    cmd = route_target[4];
+    route[4] == route_target[4];
+  }
+
 }
 
 void forward()
