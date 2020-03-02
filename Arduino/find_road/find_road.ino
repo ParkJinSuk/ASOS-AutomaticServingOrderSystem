@@ -22,15 +22,22 @@
 #define SS5_RIGHT_OUT 12
 #define NEAR          A5
 
+#define MotorA1       3
+#define MotorA2       5
+#define MotorB1       6
+#define MotorB2       9
+
 /* 서빙로봇 */
-#define Stop          0
-#define Left          1
-#define Straight       2
-#define Right         3
-int   route[5];   // 서빙로봇의 경로를 저장
+int Stop      = 0;
+int Left      = 1;
+int Straight  = 2;
+int Right     = 3;
+int Back      = 4;
+
+int   route[]= {Stop, Stop, Stop, Stop, Stop};  // 서빙로봇의 경로를 저장
 int   stack_right;  // 우회전길이 보일때마다 하나씩 증가
-int   cmd         // 서빙로봇이 나아갈 방향
-int   route_target[5];
+int   cmd;         // 서빙로봇이 나아갈 방향
+int   route_target[] = {Straight, Left, Straight, Right, Straight};
 
 /* 전역 변수 */
 byte  LeftOut;
@@ -45,33 +52,38 @@ int   target_table;
 
 unsigned long time; // 시간 측정을 위한 변수
 int           temp;
+unsigned long RightTime;
 
 void setup() {
+  pinMode(MotorA1, OUTPUT);
+  pinMode(MotorA2, OUTPUT);
+  pinMode(MotorB1, OUTPUT);
+  pinMode(MotorB2, OUTPUT);
+  
   Serial.begin(9600);
   Serial.println("###### Setup #####");
 
   time = millis();
 
-  route[5] = [Stop, Stop, Stop, Stop, Stop]; // 서빙로봇 경로 초기화
-  route_target[5] = [Straight, Left, Straight, Right, Straight];
 }
 
 void loop() {
   target_table = 1;
+
+  cmd = Straight;
   
   /* 0.5초마다 라인트레이서 모듈 센서 측정 */
   if((millis() - time)%500 == 0)
   {
     getIRSensor();
+    showIRSensor();
   }
 
-  serving_table(target_table);
-
-
-
-  if (cmd == Stright)
+  //serving_table(target_table);
+  
+  if (cmd == Straight)
   {
-    //서빙로봇 앞으로 전진
+    ;
   }
 
   if (cmd == Left)
@@ -186,4 +198,32 @@ void turnRight()
 void _stop()
 {
   Serial.println("stop");
+}
+
+void MotorA(int dir, int _speed)
+{
+  if (dir == Straight)
+  {
+    analogWrite(MotorA1, 0);
+    analogWrite(MotorA2, _speed);
+  }
+  else
+  {
+    analogWrite(MotorA1, _speed);
+    analogWrite(MotorA2, 0);
+  }
+}
+
+void MotorB(int dir, int _speed)
+{
+  if (dir == Straight)
+  {
+    analogWrite(MotorB1, _speed);
+    analogWrite(MotorB2, 0);
+  }
+  else
+  {
+    analogWrite(MotorB1, 0);
+    analogWrite(MotorB2, _speed);
+  }
 }
