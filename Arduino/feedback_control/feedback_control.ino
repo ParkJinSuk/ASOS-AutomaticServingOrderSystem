@@ -8,14 +8,14 @@ Adafruit_Sensor *mpu_temp, *mpu_accel, *mpu_gyro;
 double a, sum=0, v=0, init_a=0, tmp, tmp_a=0;
 int i=1;
 
-float Kp = 182.946985924925;
-float Ki = 7.0383050819117;
-float Kd = -223.583790055285;
+float Kp = 1.82946985924925;
+float Ki = 0.070383050819117;
+float Kd = -2.23583790055285;
 
-float input_v=50;
+float input_v=0.5;
 float measured_v, tmp_v=0;
 
-double t=0.01;
+double t=1/100;
 double PControl, IControl, DControl, PIDControl;
 double error, errorPrevious=input_v;
 int pwm_in;
@@ -31,7 +31,7 @@ void setup(void) {
       delay(10);
     }
   }
-
+  
   Serial.println("MPU6050 Found!");
 
   mpu_accel = mpu.getAccelerometerSensor();
@@ -49,6 +49,7 @@ void setup(void) {
       tmp=accel.acceleration.z;
       init_a+=tmp;
   }
+  
   init_a=init_a/10;
 
   Serial.print("init_a: "); Serial.println(init_a);
@@ -58,18 +59,18 @@ void setup(void) {
 
 void loop() {
   //  /* Get a new normalized sensor event */
-  sensors_event_t accel;
+  sensors_event_t accel; 
   mpu_accel->getEvent(&accel);
 
   /* Display the results (acceleration is measured in m/s^2) */
-  
+  /*
   Serial.print("Accel X: ");
   Serial.print(accel.acceleration.x);
   Serial.print(" Y: ");
   Serial.print(accel.acceleration.y);
   Serial.print(" Z: ");
   Serial.print(accel.acceleration.z);
-  
+  */
   
   
 /*
@@ -85,29 +86,30 @@ void loop() {
   a=accel.acceleration.x*accel.acceleration.x+accel.acceleration.y*accel.acceleration.y+accel.acceleration.z*accel.acceleration.z;
   a=sqrt(a);
   */
-  a=accel.acceleration.z-init_a;
+  a=-(accel.acceleration.z-init_a);
 
   a=(tmp_a*i+a)/(i+1);  //칼만필터 on
+  
   tmp_a=a;
   
-  v=v+a*t; //t
+  v=a*i* 0.01; 
 
   measured_v=v*18.62607;   //칼만 필터가 없을 때
   
 
   
-  error=input_v-measured_v;
+  error=input_v-v;
 
   PControl=Kp*error;
   IControl=Ki*error*t;
   DControl=Kd*(error-errorPrevious)/t;
 
   PIDControl=PControl+IControl+DControl;
-
-  if(PIDControl<=33 && PIDControl>=0)
+  /*
+  if(PIDControl<=0.33 && PIDControl>=0)
     pwm_in=100;
-  else if(PIDControl>33 && PIDControl<=58)
-    pwm_in=5.8962*PIDControl-90.2547;
+  else if(PIDControl>0.33 && PIDControl<=0.58)
+    pwm_in=5.8962*PIDControl*100-90.2547;
   else if(PIDControl<0)
     pwm_in=0;
   else
@@ -119,11 +121,18 @@ void loop() {
 
   analogWrite(2, 0);
   analogWrite(3, pwm_in);  
+*/  
+
+  analogWrite(5, 0);
+  analogWrite(6, 200);
+
+  analogWrite(2, 200);
+  analogWrite(3, 0);  
   
   errorPrevious=error;
 
 
-  
+
   Serial.print("  a: "); Serial.print(a);
   Serial.print(" measured v: "); Serial.print(measured_v); Serial.print(" pwm_in:"); Serial.print(pwm_in); 
   Serial.print(" PIDControl: "); Serial.print(PIDControl);
@@ -133,13 +142,14 @@ void loop() {
   i++;
   
   
-  if(i>100){
+  if(i>1000){
     analogWrite(5, 0);
     analogWrite(6, 0);
 
     analogWrite(2, 0);
     analogWrite(3, 0);
-    while(1); 
+    Serial.println("여기가 끝");
+    while(1);
   }
   
 
