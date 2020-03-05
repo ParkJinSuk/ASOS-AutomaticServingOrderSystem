@@ -182,6 +182,22 @@ void serving_table(int table_number)
 void forward()
 {
   Serial.println("forward");
+  if (LeftIn == true && Center == true && RightIn == true)
+  {
+    MotorA(Straight, 150);
+    MotorB(Straight, 150);
+  }
+  else if (LeftIn == true && Center == true)
+  {
+    MotorA(Straight, 150);
+    MotorB(Straight, 70);
+  }
+  else if (Center == true && RightIn == true)
+  {
+    MotorA(Straight, 150);
+    MotorB(Straight, 70);
+  }
+  
 }
 void backward()
 {
@@ -198,6 +214,9 @@ void turnRight()
 void _stop()
 {
   Serial.println("stop");
+
+  MotorA(Stop, 0);
+  MotorB(Stop, 0);
 }
 
 void MotorA(int dir, int _speed)
