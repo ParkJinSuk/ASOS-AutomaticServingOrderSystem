@@ -3,21 +3,31 @@ const int encoderPinA = 2;
 const int encoderPinB = 3;
 
 long encoderPos = 0;
-int angle = 0;
+double angle = 0, anglePrevious=0;
 int time1 = 0;
 int value = 0;
 
 double v;
+double v1=0;double v2=0;double v3=0;double v4=0;double v5=0;
+
 
 float Kp = 4.2227;
 float Ki = 2.29743;
 float Kd = -0.03976;
 float Ke = 0.084;
 
-float input_v=35;
 
-double t=0.01;
-double PControl, IControl, DControl, PIDControl;
+/*
+float Kp = 1.524;
+float Ki = 1.2575;
+float Kd = -0.2493;
+float Ke = 0.084;
+*/
+
+float input_v=10;
+
+double t=0.05;
+double PControl, IControl=0, DControl, PIDControl;
 double error, errorPrevious=input_v;
 int pwm_in;
 
@@ -34,34 +44,49 @@ void setup(void) {
   pinMode(6, OUTPUT);       // Motor B 방향설정2
 
 
-  Serial.println("Starting..");
+
   motorA(0, 0);
   delay(2000);
   time1 = millis();
 
-  value = 207;
-  Serial.print("start speed : ");
-  Serial.println(value);
-  motorA(1, value);
 }
 
 void loop() {
-  if( millis()%10 == 0){
+  if( millis()% 50 == 0){
     pos2ang();
     
-    v=3.15*angle;    
+    v1=v2;   
+    v2=v3;
+    v3=v4;
+    v4=v5;
+    v5=3.15*(angle-anglePrevious)/t;
+    
+    v = (v1+v2+v3+v4+v5)/5;
+    
+    
+    
     error=(input_v-v)*Ke;
 
     PControl=Kp*error;
-    IControl=Ki*error*t;
+    IControl+=Ki*error*t;
     DControl=Kd*(error-errorPrevious)/t;
 
     PIDControl=PControl+IControl+DControl;
 
     pwm_in=255/6*PIDControl;
-    Serial.println(pwm_in);
+    if(pwm_in>=255)
+      pwm_in=255;
+    /*Serial.print("pwm_in: "); Serial.print(pwm_in);
+    Serial.print(" v:"); Serial.println(v);
+    Serial.print(" error:"); Serial.print(error/Ke);
+    Serial.print(" PIDControl: "); Serial.print(PIDControl);
+    Serial.print(" P:"); Serial.print(PControl);
+    Serial.print(" I:"); Serial.print(IControl);
+    Serial.print(" D:"); Serial.println(DControl);*/
+    Serial.println(v);
     motorA(1, pwm_in);
     errorPrevious=error;
+    anglePrevious=angle;
   }
 }
 
@@ -91,22 +116,22 @@ void motorA(int dir, int _speed)
 {
   if (dir == 1)
   {
-    analogWrite(9, 0);
-    analogWrite(10, _speed);
+    analogWrite(5, 0);
+    analogWrite(6, _speed);
   }
   else if (dir == 2)
   {
-    analogWrite(9, _speed);
-    analogWrite(10, 0);
+    analogWrite(5, _speed);
+    analogWrite(6, 0);
   }
   else
   {
-    analogWrite(9, 0);
-    analogWrite(10, 0);
+    analogWrite(5, 0);
+    analogWrite(6, 0);
   }
 }
 
 void pos2ang()
 {
-  angle = encoderPos/(341.2*4) * 360    /360*2*3.141592;
+  angle = -encoderPos/(341.2*4) * 360 /180*3.141592  ;
 }
