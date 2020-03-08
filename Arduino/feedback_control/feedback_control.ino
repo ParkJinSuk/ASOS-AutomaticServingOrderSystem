@@ -1,4 +1,3 @@
-// encoder pin
 const int encoderPinA = 2;
 const int encoderPinB = 3;
 
@@ -16,13 +15,6 @@ float Ki = 2.29743;
 float Kd = -0.03976;
 float Ke = 0.084;
 
-
-/*
-float Kp = 1.524;
-float Ki = 1.2575;
-float Kd = -0.2493;
-float Ke = 0.084;
-*/
 
 float input_v=10;
 
