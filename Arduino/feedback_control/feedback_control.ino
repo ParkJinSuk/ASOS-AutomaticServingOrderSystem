@@ -30,8 +30,8 @@ void setup(void) {
  
   Serial.begin(115200);
   
-  pinMode(9, OUTPUT);       // Motor B 방향설정1
-  pinMode(10, OUTPUT);       // Motor B 방향설정2
+  pinMode(5, OUTPUT);       // Motor B 방향설정1
+  pinMode(6, OUTPUT);       // Motor B 방향설정2
 
 
   Serial.println("Starting..");
@@ -48,7 +48,7 @@ void setup(void) {
 void loop() {
   if( millis()%10 == 0){
     pos2ang();
-    Serial.println(angle);
+    
     v=3.15*angle;    
     error=(input_v-v)*Ke;
 
@@ -59,7 +59,7 @@ void loop() {
     PIDControl=PControl+IControl+DControl;
 
     pwm_in=255/6*PIDControl;
-  
+    Serial.println(pwm_in);
     motorA(1, pwm_in);
     errorPrevious=error;
   }
