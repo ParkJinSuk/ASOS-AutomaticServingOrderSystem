@@ -73,34 +73,43 @@ void loop() {
   cmd = Straight;
   
   /* 0.5초마다 라인트레이서 모듈 센서 측정 */
-  if((millis() - time)%500 == 0)
+  if((millis() - time)%100 == 0)
   {
     getIRSensor();
-    showIRSensor();
+    //showIRSensor();
   }
 
   //serving_table(target_table);
+
+  /* 0.5초마다 주행 명령 */
+  if((millis() - time)%100 == 0)
+  {
+    if (cmd == Straight)
+    {
+      forward();
+    }
+    
+    if (cmd == Left)
+    {
+      //서빙로봇 좌회전
+    }
+    
+    if (cmd == Right)
+    {
+      //서빙로봇 우회전
+    }
+    
+    if (cmd == Stop)
+    {
+      //서빙로봇 정지
+    }
+  }
   
-  if (cmd == Straight)
-  {
-    ;
-  }
 
-  if (cmd == Left)
-  {
-    //서빙로봇 좌회전
-  }
-
-  if (cmd == Right)
-  {
-    //서빙로봇 우회전
-  }
-
-  if (cmd == Stop)
-  {
-    //서빙로봇 정지
-  }
 }
+
+
+
 
 /* 라인트레이서 모듈 값 읽어오기 */
 void getIRSensor()
@@ -113,7 +122,6 @@ void getIRSensor()
   Bump     = digitalRead(CLP_BUMP);
   Near     = digitalRead(NEAR);
 }
-
 /* 라인트레이서 모듈 값 출력 */
 void showIRSensor()
 {
@@ -126,6 +134,10 @@ void showIRSensor()
   if (Near     == 1) {Serial.print(" NEAR");}  else {Serial.print("    ");}
   Serial.println();
 }
+/********************************/
+
+
+
 
 /* 서빙할 테이블로 찾아가는 알고리즘 */
 void serving_table(int table_number)
@@ -178,25 +190,77 @@ void serving_table(int table_number)
   }
 
 }
+/*************************************/
 
+
+
+/* 라인트레이서 모듈을 사용하여 검은색 선을 따라가는 함수 */
 void forward()
 {
-  Serial.println("forward");
-  if (LeftIn == true && Center == true && RightIn == true)
+  /*
+  if (!LeftIn && !Center && !RightIn)
   {
+    Serial.println("forward 111");
+    MotorA(Straight, 230);
+    MotorB(Straight, 230);
+  }
+  else if (LeftIn && !Center && !RightIn)
+  {
+    Serial.println("forward 011");
     MotorA(Straight, 150);
+    MotorB(Straight, 210);
+  }
+  else if (!LeftIn && !Center && RightIn)
+  {
+    Serial.println("forward 110");
+    MotorA(Straight, 210);
     MotorB(Straight, 150);
   }
-  else if (LeftIn == true && Center == true)
+  else if (LeftIn && Center && RightIn)
   {
-    MotorA(Straight, 150);
-    MotorB(Straight, 70);
+    Serial.println("forward 000");
+    MotorA(Stop, 0);
+    MotorB(Stop, 0);
   }
-  else if (Center == true && RightIn == true)
+  else
   {
-    MotorA(Straight, 150);
-    MotorB(Straight, 70);
+    Serial.println("forward xxx");
+    MotorA(Straight, 200);
+    MotorB(Straight, 200);
   }
+  */
+
+  if (!LeftIn && !RightIn)
+  {
+    Serial.println("forward 111");
+    MotorA(Straight, 170);
+    MotorB(Straight, 170);
+  }
+  else if (LeftIn && !RightIn)
+  {
+    Serial.println("forward 011");
+    MotorA(Straight, 150);
+    MotorB(Straight, 80);
+  }
+  else if (!LeftIn && RightIn)
+  {
+    Serial.println("forward 110");
+    MotorA(Straight, 80);
+    MotorB(Straight, 150);
+  }
+  else if (LeftIn && RightIn)
+  {
+    Serial.println("forward 000");
+    MotorA(Stop, 0);
+    MotorB(Stop, 0);
+  }
+  else
+  {
+    Serial.println("forward xxx");
+    MotorA(Straight, 200);
+    MotorB(Straight, 200);
+  }
+  
   
 }
 void backward()
@@ -218,7 +282,11 @@ void _stop()
   MotorA(Stop, 0);
   MotorB(Stop, 0);
 }
+/****************************/
 
+
+
+/* 모터를 직접 컨트롤 하는 함수 */
 void MotorA(int dir, int _speed)
 {
   if (dir == Straight)
@@ -232,7 +300,6 @@ void MotorA(int dir, int _speed)
     analogWrite(MotorA2, 0);
   }
 }
-
 void MotorB(int dir, int _speed)
 {
   if (dir == Straight)
@@ -246,3 +313,4 @@ void MotorB(int dir, int _speed)
     analogWrite(MotorB2, _speed);
   }
 }
+/*****************************/
