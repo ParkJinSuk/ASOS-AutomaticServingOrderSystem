@@ -65,15 +65,34 @@ void pos2ang()
 
 void pos2ang_Hz(int Hz)
 {
+  /*
+  double t = 1 / (double)Hz;
   if( (millis()-time) % (1000 / Hz) == 0 )
   {
+    v = 0;
     anglePrevious=angle;    
     pos2ang();
+    for(int i=0;i<49;i++)
+    {
+      v_array[i]=v_array[i+1];
+      v += v_array[i];
+    }
+    
+    v_array[49]=3.15*(angle-anglePrevious)/t;
+    
+    v += v_array[49];
+    v /= 50;
+    Serial.println(v);
+  }
+  */
+  if( (millis()-time) % (1000 / Hz) == 0 )
+  {
+  anglePrevious=angle;    
+  pos2ang();
   }
 }
 
 void Motor_Control(int input_velocity)
 {
-  errorPrevious = input_velocity;
   pidControl_Hz(Hz, input_velocity);
 }
