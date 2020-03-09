@@ -30,15 +30,13 @@ int Back          = 4;
 
 /* global variable - PID Control */
 long encoderPos = 0;
-double angle = 0, anglePrevious=0;
+double angle = 0, angle_pre=0;
 int time1 = 0;
 int value = 0;
 
 double v;
-double v1=0;double v2=0;double v3=0;double v4=0;double v5=0;
-double v6=0;double v7=0;double v8=0;double v9=0;double v10=0;
-double vPrevious = 0;
-double v_array[100]={0};
+double v_pre = 0;
+double v_array[10]={0};
 float Kp = 4.2227;
 float Ki = 2.29743;
 float Kd = -0.03976;
@@ -47,7 +45,7 @@ float Ke = 0.084;
 int k = 0;
 
 double PControl, IControl=0, DControl, PIDControl;
-double error, errorPrevious=vi;
+double error, error_pre;
 int pwm_in;
 
 

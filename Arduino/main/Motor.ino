@@ -63,16 +63,16 @@ void pos2ang()
   angle = -encoderPos/(341.2*4) * 360 /180*3.141592  ;
 }
 
-void pos2ang_Hz(int Hz)
+void pos2ang2v_Hz(int Hz)
 {
-  /*
+  
   double t = 1 / (double)Hz;
-  if( (millis()-time) % (1000 / Hz) == 0 )
+  if( (millis()-time) % (1000 / Hz) == 5 )
   {
     v = 0;
     anglePrevious=angle;    
     pos2ang();
-    for(int i=0;i<49;i++)
+    for(int i=0;i<10;i++)
     {
       v_array[i]=v_array[i+1];
       v += v_array[i];
@@ -84,12 +84,17 @@ void pos2ang_Hz(int Hz)
     v /= 50;
     Serial.println(v);
   }
-  */
+  
   if( (millis()-time) % (1000 / Hz) == 0 )
   {
   anglePrevious=angle;    
   pos2ang();
   }
+}
+
+void ang2v_Hz(int Hz)
+{
+  
 }
 
 void Motor_Control(int input_velocity)
