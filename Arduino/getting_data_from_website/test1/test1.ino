@@ -3,7 +3,7 @@
 #include <MySQL_Cursor.h>
 
 #include "SoftwareSerial.h"
-SoftwareSerial esp(2, 3); // RX, TX
+SoftwareSerial esp(8, 9); // RX, TX
 
 
 byte mac_addr[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -17,7 +17,9 @@ char pass[] = "sexymandoo";        // 공유기 암호 Password
 
 
 // Sample query
-char query[] = "SELECT Num FROM test.test WHERE name = 'xaewon'";
+char query[] = "SELECT _table FROM project.orderDB WHERE call_arduino = '1' AND serving = '0' ;";
+char query2[] = "UPDATE project.orderDB SET serving = '1' WHERE call_arduino = '1' AND serving = '0' ;";
+
 
 int status = WL_IDLE_STATUS;        // Status
 
@@ -108,11 +110,11 @@ void loop()
   delete cur_mem;
 
   // Show the result
-  Serial.print("  NYC pop = ");
+  Serial.print(" 서빙테이블 = ");
   Serial.println(head_count);
 
   delay(500);
-
+/*
   Serial.println("2) Demonstrating using a local, global cursor.");
   // Execute the query
   cur.execute(query);
@@ -125,13 +127,14 @@ void loop()
       head_count = atol(row->values[0]);
     }
   } while (row != NULL);
+  */
   // Now we close the cursor to free any memory
+
+
+
+  cur_mem->execute(query2); //제일 마지막에 해줘야하는 작업
   cur.close();
 
-  // Show the result but this time do some math on it
-  Serial.print("  NYC pop = ");
-  Serial.println(head_count);
-  Serial.print("  NYC pop increased by 12 = ");
-  Serial.println(head_count+12);
+
 
 }
