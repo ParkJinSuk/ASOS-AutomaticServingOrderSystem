@@ -1,4 +1,4 @@
-/* Arduino Pin */
+  /* Arduino Pin */
 #define SS1_LEFT_OUT  A1
 #define SS2_LEFT_IN   A2
 #define SS4_RIGHT_IN  A3
@@ -12,7 +12,6 @@
 #define MotorB1       10
 #define MotorB2       11
 
-#define vi            20
 
 /* global variable - IR sensor */
 byte  LeftOut;
@@ -37,6 +36,7 @@ int value = 0;
 double v;
 double v_pre = 0;
 double v_array[10]={0};
+double v_avg = 0;
 float Kp = 4.2227;
 float Ki = 2.29743;
 float Kd = -0.03976;
@@ -52,7 +52,7 @@ int pwm_in;
 
 unsigned long time; // 시간 측정을 위한 변수
 
-double Hz = 20;
+//double Hz = 20;
 
 void setup() {
   pinMode(encoderPinA, INPUT_PULLUP);
@@ -61,12 +61,14 @@ void setup() {
   attachInterrupt(1, doEncoderB, CHANGE);
   
   Serial.begin(9600);
+  time = millis();
 
 }
 
 void loop() {
-  getIRSensor_Hz(Hz); // IR센서 측정
-  pos2ang_Hz(50);     // DC모터 회전 각도 측정
-
-  Motor_Control(vi);
+  getIRSensor_Hz(10); // IR센서 측정
+  pos2ang2v_Hz(10);     // DC모터 회전각도와 속력 측정
+  //v_noise_reduction_Hz(10);
+  //Motor_Control(20);
+  MotorA(Straight, 200);
 }
