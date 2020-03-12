@@ -2,6 +2,7 @@
 #include <MySQL_Connection.h>
 #include <MySQL_Cursor.h>
 
+
 byte mac_addr[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
 IPAddress server_addr(106,10,39,5);  // IP of the MySQL *server* here
@@ -9,11 +10,13 @@ char user[] = "sexymandoo";              // MySQL user login username
 char password[] = "sexymandoo";        // MySQL user login password
 
 // WiFi card example
-char ssid[] = "pink";    // your SSID
-char pass[] = "sexymandoo";       // your SSID Password
+char ssid[] = "Sexy_Jaewon";    // your SSID
+char pass[] = "jaewonsexy";       // your SSID Password
 
 // Sample query
-char query[] = "SELECT Num FROM test.test WHERE name = 'sex'";
+char query[] = "SELECT _table FROM proejct.orderDB WHERE call_arduino = '1' AND serving = '0'";
+
+
 
 WiFiClient client;            // Use this for WiFi instead of EthernetClient
 
@@ -50,7 +53,7 @@ void setup() {
 
 void loop() {
   row_values *row = NULL;
-  long head_count = 0;
+  long TableNum = 0;
 
   delay(1000);
 
@@ -66,20 +69,23 @@ void loop() {
   do {
     row = cur_mem->get_next_row();
     if (row != NULL) {
-      head_count = atol(row->values[0]);
+      TableNum = atol(row->values[0]);
     }
   } while (row != NULL);
   // Deleting the cursor also frees up memory used
   delete cur_mem;
 
   // Show the result
-  Serial.print("  NYC pop = ");
-  Serial.println(head_count);
+  Serial.print("서빙할 테이블 = "); Serial.println(TableNum);
+
+
+  char query2[] = "UPDATE project.orderDB SET serving = '1' WHERE call_arduino = '1' AND serving = '0' ";
+
+  // Execute the query
+  cur_mem->execute(query2);
 
   delay(500);
 
-  Serial.println("2) Demonstrating using a local, global cursor.");
-  // Execute the query
   cur.execute(query);
   // Fetch the columns (required) but we don't use them.
   cur.get_columns();
@@ -87,16 +93,12 @@ void loop() {
   do {
     row = cur.get_next_row();
     if (row != NULL) {
-      head_count = atol(row->values[0]);
+      TableNum = atol(row->values[0]);
     }
   } while (row != NULL);
   // Now we close the cursor to free any memory
   cur.close();
 
-  // Show the result but this time do some math on it
-  Serial.print("  NYC pop = ");
-  Serial.println(head_count);
-  Serial.print("  NYC pop increased by 12 = ");
-  Serial.println(head_count+12);
+
 
 }
