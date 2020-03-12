@@ -60,44 +60,27 @@ void doEncoderB()
 
 void pos2ang()
 {
+  //angle = -encoderPos/(341.2*4) * 360 /180*3.141592  ;
   angle = -encoderPos/(341.2*4) * 360 /180*3.141592  ;
+  Serial.println(angle-angle_pre);
 }
 
 void pos2ang2v_Hz(int Hz)
-{
-  
+{ 
   double t = 1 / (double)Hz;
-  if( (millis()-time) % (1000 / Hz) == 5 )
+  if( (millis()-time) % (1000 / Hz) == 10 )
   {
-    v = 0;
-    anglePrevious=angle;    
+    v_pre = v;
+    angle_pre = angle;    
     pos2ang();
-    for(int i=0;i<10;i++)
-    {
-      v_array[i]=v_array[i+1];
-      v += v_array[i];
-    }
     
-    v_array[49]=3.15*(angle-anglePrevious)/t;
-    
-    v += v_array[49];
-    v /= 50;
-    Serial.println(v);
+    v = 3.15*(angle-angle_pre)/t;
   }
-  
-  if( (millis()-time) % (1000 / Hz) == 0 )
-  {
-  anglePrevious=angle;    
-  pos2ang();
-  }
+  //Serial.println(v);
 }
 
-void ang2v_Hz(int Hz)
-{
-  
-}
 
-void Motor_Control(int input_velocity)
+void Motor_Control(int input_v)
 {
-  pidControl_Hz(Hz, input_velocity);
+  pidControl_Hz(10, input_v);
 }
