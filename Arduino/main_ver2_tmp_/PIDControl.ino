@@ -31,10 +31,10 @@ void pidControl_Hz(int Hz, double input_v)
     
     //Serial.println(v);
 
-    MotorA(Straight, pwm_in);
-    MotorB(Straight, pwm_in);
-    //MotorA(Straight, -50);
-    //MotorB(Straight, -50);
+    MotorA(STRAIGHT, pwm_in);
+    MotorB(STRAIGHT, pwm_in);
+    //MotorA(STRAIGHT, -50);
+    //MotorB(STRAIGHT, -50);
     
     //angle_pre = angle;
     v_pre     = v;

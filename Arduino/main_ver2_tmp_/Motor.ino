@@ -12,15 +12,10 @@
 
 void MotorA(int dir, int _speed)
 {
-  if (dir == Straight)
+  if (dir == STRAIGHT)
   {
     analogWrite(MotorA1, 0);
     analogWrite(MotorA2, _speed);
-  }
-  else if (dir == Back)
-  {
-    analogWrite(MotorA1, _speed);
-    analogWrite(MotorA2, 0);
   }
   else
   {
@@ -31,15 +26,10 @@ void MotorA(int dir, int _speed)
 
 void MotorB(int dir, int _speed)
 {
-  if (dir == Straight)
+  if (dir == STRAIGHT)
   {
     analogWrite(MotorB1, _speed);
     analogWrite(MotorB2, 0);
-  }
-  else if (dir == Back)
-  {
-    analogWrite(MotorB1, 0);
-    analogWrite(MotorB2, _speed);
   }
   else
   {

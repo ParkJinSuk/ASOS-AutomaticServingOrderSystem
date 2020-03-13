@@ -1,60 +1,161 @@
-/* 프로그램 내용 : 라인트레이서 모듈을 이용하여 길을 찾는 알고리즘
- * 
- * 라인트레이서 모듈에는 5개의 IR 센서가 존재하는데 그중에서
- * 인식이 잘 안되고 있는 가운데 모듈은 제외하고
- * 가운데 2개는 직선 길을 찾는데 사용하고
- * 가장자리 2개는 커브길의 존재를 탐지하는데 사용
- * 
- * forward        검은색 선을 따라가는 함수
- */
+void lineTracing()
+{
+  /* 0.5초마다 라인트레이서 모듈 센서 측정 */
+  if((millis() - time) >= SENSING_PERIOD)
+  {
+    time = millis();
+    getIRSensor();
+//    showIRSensor();
+    if(isCrosswalk()){
+      Serial.println(F("갈림길 감지"));
+      crosswalkCnt += 1;
+      if(isTurningTime(crosswalkCnt)){//회전할 갈림길
+        if(turn[target_table] == LEFT)
+          Serial.println(F("왼쪽"));
+        else if(turn[target_table] == RIGHT){
+          Serial.println(F("오른쪽"));
+        }
+        moveTracer(turn[target_table]);//회전한다.
+      }else{
+        Serial.println(F("갈림길 통과"));
+        moveTracer(FORWARD_THROUGH_CROSSWALK);//갈림길 통과
+      }
+      
+    }else if(isRoad()){
+      Serial.println(F("straight"));
+      moveTracer(STRAIGHT);//앞으로 이동.
+    }else{
+     Serial.println(F("stop"));
+      moveTracer(STOP);//멈춘다.
+      isDone = true;
+    }
+  }
+  
+
+}
+
+bool isCrosswalk(){
+  return !RightOut && !LeftOut;//검검이면 갈림길!!
+}
+
+bool isTurningTime(int cnt){
+  Serial.println(cnt);
+  return cnt == crosswalk[target_table];
+}
+
+bool isRoad(){
+  return !LeftIn || !RightIn;//하나라도 검정이면 길!
+}
+
+void moveTracer(int dir){
+//  Serial.print("moveTracer");
+//  Serial.println(dir);
+
+  switch(dir){
+    case STRAIGHT  : moveForward();break;
+    case LEFT     : turnLeft();break;
+    case RIGHT    : turnRight();break;
+    case STOP     : stopMoving();break;
+    case FORWARD_THROUGH_CROSSWALK : moveThroughCrosswalk();break;
+  }
+}
+
 
 /* 라인트레이서 모듈을 사용하여 검은색 선을 따라가는 함수 */
-void forward()
+void moveForward()
 {
   if (!LeftIn && !RightIn)
   {
-    pidControl_Hz(10, 20);
+//    Serial.println("forward 11");
+    MotorA(STRAIGHT, STRAIGHT_SPEED);
+    MotorB(STRAIGHT, STRAIGHT_SPEED);
   }
   else if (LeftIn && !RightIn)
   {
-    MotorA(Straight, 150);
-    MotorB(Straight, 80);
+//    Serial.println("forward 01");
+    MotorA(STRAIGHT, STRAIGHT_SPEED_WEEK);
+    MotorB(STRAIGHT, STRAIGHT_SPEED_STRONG);
   }
   else if (!LeftIn && RightIn)
   {
-    MotorA(Straight, 80);
-    MotorB(Straight, 150);
+//    Serial.println("forward 10");
+    MotorA(STRAIGHT, STRAIGHT_SPEED_STRONG);
+    MotorB(STRAIGHT, STRAIGHT_SPEED_WEEK);
   }
   else if (LeftIn && RightIn)
   {
-    MotorA(Stop, 0);
-    MotorB(Stop, 0);
+//    Serial.println("forward 00");
+    MotorA(STOP, 0);
+    MotorB(STOP, 0);
   }
   else
   {
-    MotorA(Straight, 200);
-    MotorB(Straight, 200);
+//    Serial.println("forward xx");
+    MotorA(STRAIGHT, STRAIGHT_SPEED);
+    MotorB(STRAIGHT, STRAIGHT_SPEED);
   }
   
   
 }
-void backward()
-{
-  MotorA(Back, 150);
-  MotorB(Back, 150);
-}
+
 void turnLeft()
 {
-  MotorA(Straight, 200);
-  MotorB(Straight, 100);
+//  Serial.println("turn left");
+
+  while(!RightOut || !LeftOut){//하양이면 끝. 도는 동안은 계속 검정.
+    if((millis() - time) >= SENSING_PERIOD){
+      time = millis();
+      getIRSensor();
+    }
+    Serial.println(F("왼쪽~~~~~~~~~~~~~~~~"));
+
+
+    MotorA(STRAIGHT, TURN_SPEED);
+    MotorB(STRAIGHT, 0);
+  }
+   Serial.println(F("왼쪽~~~~~~~~~~~~끝~~~~"));
+
 }
 void turnRight()
 {
-  MotorA(Straight, 100);
-  MotorB(Straight, 200);
+//  Serial.println("turn right");
+
+  while(!RightOut || !LeftOut){//하양이면 끝. 도는 동안은 계속 검정.
+    if((millis() - time) >= SENSING_PERIOD){
+      time = millis();
+      getIRSensor();
+    }
+//    if(LeftOut != pre){
+//      chgCnt += 1;
+//      pre = LeftOut;
+//    }
+    Serial.println(F("오른쪽~~~~~~~~~~~~~~~~"));
+
+    MotorA(STRAIGHT, 0);
+    MotorB(STRAIGHT, TURN_SPEED);
+  }
+   Serial.println(F("오른~~~~~~~~~~~~끝쪽~~~~"));
+
+
 }
-void _stop()
+void stopMoving()
 {
-  MotorA(Stop, 0);
-  MotorB(Stop, 0);
+//  Serial.println("stop");
+  MotorA(STOP, 0);
+  MotorB(STOP, 0);
 }
+
+void moveThroughCrosswalk(){
+  //    Serial.println("move Through crosswalk");
+  while(isCrosswalk()){
+    if((millis() - time) >= SENSING_PERIOD){
+      time = millis();
+      getIRSensor();
+    }
+
+    MotorA(STRAIGHT, STRAIGHT_SPEED);
+    MotorB(STRAIGHT, STRAIGHT_SPEED);
+    delay(100);
+  }
+}
+/****************************/

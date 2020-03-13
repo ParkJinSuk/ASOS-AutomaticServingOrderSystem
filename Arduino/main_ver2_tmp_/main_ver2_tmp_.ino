@@ -18,6 +18,16 @@
 #define MotorB2       11
 
 
+
+
+#define TURN_SPEED  200
+#define STRAIGHT_SPEED  110
+
+#define STRAIGHT_SPEED_STRONG  150
+#define STRAIGHT_SPEED_WEEK  110
+
+#define SENSING_PERIOD  100
+
 /* global variable - IR sensor */
 byte  LeftOut;
 byte  LeftIn;
@@ -26,11 +36,15 @@ byte  RightOut;
 
 /* global variable - ServingRobot Direction */
 int cmd_direction = 0;
-int Stop          = 0;
-int Left          = 1;
-int Straight      = 2;
-int Right         = 3;
-int Back          = 4;
+
+/* 서빙로봇 명령 */
+const int STOP      = 0;
+const int LEFT      = 1;
+const int STRAIGHT  = 2;
+const int RIGHT     = 3;
+const int BACK      = 4;
+const int FORWARD_THROUGH_CROSSWALK = 5;
+
 
 /* global variable - PID Control */
 long encoderPos = 0;
@@ -61,6 +75,12 @@ int pwm_in;
 
 /* global variable - WiFi */
 long target_table = 0;
+
+/* global variable - Find Table */
+int crosswalk[9] = {0, 1, 1, 2, 2, 3, 3, 4, 4};//갈림길 지나야하는 횟수. index 0은 사용하지 않는다.
+int turn[9] = {0, LEFT, RIGHT, LEFT, RIGHT, LEFT, RIGHT, LEFT, RIGHT};//회전해야할 때, left로 가야하는지 right로 가야하는지
+int crosswalkCnt = 0;//몇 번째 갈림길을 만났는지 체크!
+bool isDone = true;
 
 WiFiEspClient client;
 MySQL_Connection conn((Client *)&client);
@@ -102,6 +122,11 @@ void setup() {
   attachInterrupt(0, doEncoderA, CHANGE);
   pinMode(encoderPinB, INPUT_PULLUP);
   attachInterrupt(1, doEncoderB, CHANGE);
+
+  pinMode(MotorA1, OUTPUT);
+  pinMode(MotorA2, OUTPUT);
+  pinMode(MotorB1, OUTPUT);
+  pinMode(MotorB2, OUTPUT);
   
   Serial.begin(9600);
   esp.begin(9600);
@@ -151,20 +176,25 @@ void setup() {
 void loop() {
   
   if(target_table == 0){
-    get_table_number();  
+    get_table_number();
+    isDone = false; 
   }
-  else
+  if(target_table != 0)
+  {
+    lineTracing();
+  }
+  if(isDone && (target_table != 0))
   {
     cur_mem->execute(query2); //제일 마지막에 해줘야하는 작업
     cur.close();
     target_table = 0;
   }
   
-
+  
 
 
   
-  pidControl_Hz(Hz, 30); // 30cm/s 속도로 주행
+  //pidControl_Hz(Hz, 30); // 30cm/s 속도로 주행
 }
 
 void get_table_number()
