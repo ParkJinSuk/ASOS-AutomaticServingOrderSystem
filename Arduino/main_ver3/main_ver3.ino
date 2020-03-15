@@ -187,7 +187,7 @@ void loop() {
   }
   if(isDone && (target_table != 0))
   {
-    cur_mem->execute(query2); //제일 마지막에 해줘야하는 작업
+    cur_mem->execute(query2); //MySQL에 서빙 완료를 알림
     cur.close();
     target_table = 0;
   }
@@ -206,15 +206,13 @@ void get_table_number()
 
   delay(1000);
 
-  // Initiate the query class instance
-  //MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+  
+ 
   cur_mem = new MySQL_Cursor(&conn);
-  // Execute the query
+  // query를 실행시켜서 MySQL에서 데이터를 읽어옴
   cur_mem->execute(query);
-  // Fetch the columns (required) but we don't use them.
   column_names *columns = cur_mem->get_columns();
 
-  // Read the row (we are only expecting the one)
   do {
     row = cur_mem->get_next_row();
     if (row != NULL) {
@@ -222,10 +220,10 @@ void get_table_number()
       target_table = atol(row->values[0]);
     }
   } while (row != NULL);
-  // Deleting the cursor also frees up memory used
+  // 동적 메모리 할당 지우기
   delete cur_mem;
 
-  // Show the result
+  // 결과 출력
   Serial.print(F(" 서빙테이블 = "));
   Serial.println(target_table);
 

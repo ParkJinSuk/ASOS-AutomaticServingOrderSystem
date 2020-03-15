@@ -130,12 +130,12 @@ void turnRight()
 //      chgCnt += 1;
 //      pre = LeftOut;
 //    }
-    Serial.println(F("오른쪽~~~~~~~~~~~~~~~~"));
+    Serial.println(F("오른쪽~"));
 
     MotorA(STRAIGHT, 0);
     MotorB(STRAIGHT, TURN_SPEED);
   }
-   Serial.println(F("오른~~~~~~~~~~~~끝쪽~~~~"));
+   Serial.println(F("오른끝쪽"));
 
 
 }
