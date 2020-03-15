@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">TracingOrder</string>
+
+    <string name="memu_item">memu_item</string>
+    <string name="price_text">%d원</string>
+    <string name="cnt_text">%d개</string>
+    <string name="payment_button">%d원 결제하기</string>
+
+
+
+    <string name="insert_cart">장바구니에 담기</string>
+    <string name="cart">장바구니</string>
+
+
+    <string name="pasta_tomato">TomatoPasta</string>
+    <string name="pasta_alio">AlioOlio</string>
+
+    <string name="risotto_tomato">TomatoRisotto</string>
+    <string name="risotto_cream">CreamRisotto</string>
+
+    <string name="ade_greenapple">GreenappleAde</string>
+    <string name="ade_grapefruit">GrapefruitAde</string>
+
+</resources>
