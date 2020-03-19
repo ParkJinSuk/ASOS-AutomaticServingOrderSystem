@@ -1,26 +1,16 @@
-# 1.1 프로젝트 명 
+# Project Name 
 
+ASOS
 Automatic Serving & Order System 
 
-# 1.2 프로젝트 기간 
+# Project Period & Team members
 
 2020.02.21 ~ 2020.03.21 (4주) 
+시립대 박진석, 서재원, 송태헌
 
-# RestaurantsSurvingRobot
-```
-ParkJinSuk
-```
-ArduinoProject
+# Summary
 
-# IR Sensor
-vcc는 5v 전원연결
-
-
-# WIFI config
-
-WiFiNiNa 라이브러리 추가
-
-# Arduino to Mysql
+This project creates an unmanned serving robot that automatically serves in a restaurant, an application that places an order, and a web page capable of serving and ordering. Since the serving robot is connected to Wi-Fi, the environment is possible wherever the router is installed, and the ordered food is stored on the server, thus realizing the perfect IoT.
 
 
 # MySQL 명령어 모음
