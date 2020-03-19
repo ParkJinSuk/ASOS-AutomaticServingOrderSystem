@@ -1,3 +1,11 @@
+#1.1 프로젝트 명 
+
+Automatic Serving & Order System 
+
+#1.2 프로젝트 기간 
+
+2020.02.21 ~ 2020.03.21 (4주) 
+
 # RestaurantsSurvingRobot
 ```
 ParkJinSuk
