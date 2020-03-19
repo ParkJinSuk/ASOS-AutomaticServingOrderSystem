@@ -3,15 +3,22 @@
 ASOS
 Automatic Serving & Order System 
 
-# Project Period & Team members
+# Project period & team members
 
 2020.02.21 ~ 2020.03.21 (4주) 
 시립대 박진석, 서재원, 송태헌
 
-# Summary
+# 요약 
 
-This project creates an unmanned serving robot that automatically serves in a restaurant, an application that places an order, and a web page capable of serving and ordering. Since the serving robot is connected to Wi-Fi, the environment is possible wherever the router is installed, and the ordered food is stored on the server, thus realizing the perfect IoT.
+본 프로젝트는 식당에서 사용할 수 있는 자동으로 서빙을 해주는 무인 서빙 로봇, 주문을 해주는 어플리케이션과 주문을 확인하고 서빙 명령이 가능한 웹페이지 제작을 한다. 서빙 로봇은 Wi-Fi와 연결되었기 때문에 공유기가 설치된 환경이면 어디서든 환경이 가능하고, 주문한 음식은 서버에 저장되기 때문에 완벽한 IoT를 구현하였다.   
 
+# 개발 배경 
+
+현대사회에서 생산성과 효율을 위해서 많은 분야에서 무인/자동화가 이루어지고 있다. 이러한 추세에 따라 매장에 무인 주문 결제기인 ‘키오스크’가 설치되고 있고, 일부 매장은 어플로 주문을 하는 시스템을 도입했다. 따라서 위의 주문 시스템에 자동으로 서빙을 로봇을 융합함으로 IoT를 이용한 무인 서비스 제공을 목표로 한다. 
+
+# 프로젝트 목적 및 기대효과 
+
+이 프로젝트의 목적은 주문/서빙 시스템의 자동화이다. 병렬적으로 주문을 할 수 있는 무인 주문서비스와 무인 서빙 서비스를 만드는 것이 목표이다. 무인 서빙 서비스가 있기 때문에 서빙에 필요한 인건비가 줄어들어 경제적이고 효율적이다. 무인 주문 서비스를 통해서 순간적으로 사람이 집중이 되더라도 주문하는데 기다릴 필요가 없게 된다. 또한, 주방에서 출력된 종이 영수증을 보통 주문의 순서를 정하는데, 이 프로젝트를 통해서 종이 영수증대신 태블릿 PC와 같은 전자기기로 대체할 수 있을 것이다. 이에 따라 주방에서 낭비되는 종이의 양을 줄여서 환경보호면에서도 효과가 있다. 또한, 보드는 Arduino UNO만을 사용하고 성능을 대부분 사용하여 개발을 했기 때문에 실제 제품으로 만들 시 제품 비용 절감이 매우 절감될 것이다.  
 
 # MySQL 명령어 모음
 
